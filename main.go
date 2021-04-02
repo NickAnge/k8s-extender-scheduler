@@ -11,6 +11,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 
 	"k8s.io/api/core/v1"
+	schedulerapi "k8s.io/kubernetes/pkg/scheduler/apis/extender/v1"
 )
 
 const (
@@ -32,21 +33,27 @@ var (
 		},
 	}
 
-//	ZeroPriority = Prioritize{
-//		Name: "zero_score",
-//		Func: func(_ v1.Pod, nodes []v1.Node) (*schedulerapi.HostPriorityList, error) {
-//			var priorityList schedulerapi.HostPriorityList
-//			priorityList = make([]schedulerapi.HostPriority, len(nodes))
-//			for i, node := range nodes {
-//				priorityList[i] = schedulerapi.HostPriority{
-//					Host:  node.Name,
-//					Score: 0,
-//				}
-//			}
-//			return &priorityList, nil
-//		},
-//	}
-//
+	ZeroPriority = Prioritize{
+		Name: "zero_score",
+		Func: func(_ v1.Pod, nodes []v1.Node) (*schedulerapi.HostPriorityList, error) {
+			var priorityList schedulerapi.HostPriorityList
+
+			log.Print("Perasa apo zero priority")
+			priorityList = make([]schedulerapi.HostPriority, 1)
+			priorityList[0] = schedulerapi.HostPriority{
+				Host:  nodes[1].Name,
+				Score: 1,
+			}
+			//for _, node := range nodes {
+			//	priorityList[0] = schedulerapi.HostPriority{
+			//		Host:  node.Name,
+			//		Score: 0,
+			//			}
+			//}
+			return &priorityList, nil
+		},
+	}
+
 //	NoBind = Bind{
 //		Func: func(podName string, podNamespace string, podUID types.UID, node string) error {
 //			return fmt.Errorf("This extender doesn't support Bind.  Please make 'BindVerb' be empty in your ExtenderConfig.")
@@ -107,10 +114,10 @@ func main() {
 		AddPredicateRoute(router, p)
 	}
 
-	//priorities := []Prioritize{ZeroPriority}
-	//for _, p := range priorities {
-	//	AddPrioritize(router, p)
-	//}
+	priorities := []Prioritize{ZeroPriority}
+	for _, p := range priorities {
+		AddPrioritize(router, p)
+	}
 
 	//AddBind(router, NoBind)
 

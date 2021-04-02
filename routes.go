@@ -54,37 +54,38 @@ func PredicateRoute(predicate Predicate) httprouter.Handle {
 	}
 }
 
-//func PrioritizeRoute(prioritize Prioritize) httprouter.Handle {
-//	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-//		checkBody(w, r)
-//
-//		var buf bytes.Buffer
-//		body := io.TeeReader(r.Body, &buf)
-//		log.Print("info: ", prioritize.Name, " ExtenderArgs = ", buf.String())
-//
-//		var extenderArgs schedulerapi.ExtenderArgs
-//		var hostPriorityList *schedulerapi.HostPriorityList
-//
-//		if err := json.NewDecoder(body).Decode(&extenderArgs); err != nil {
-//			panic(err)
-//		}
-//
-//		if list, err := prioritize.Handler(extenderArgs); err != nil {
-//			panic(err)
-//		} else {
-//			hostPriorityList = list
-//		}
-//
-//		if resultBody, err := json.Marshal(hostPriorityList); err != nil {
-//			panic(err)
-//		} else {
-//			log.Print("info: ", prioritize.Name, " hostPriorityList = ", string(resultBody))
-//			w.Header().Set("Content-Type", "application/json")
-//			w.WriteHeader(http.StatusOK)
-//			w.Write(resultBody)
-//		}
-//	}
-//}
+func PrioritizeRoute(prioritize Prioritize) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		checkBody(w, r)
+
+		var buf bytes.Buffer
+		body := io.TeeReader(r.Body, &buf)
+		log.Print("info: ", prioritize.Name, " ExtenderArgs = ", buf.String())
+
+		var extenderArgs schedulerapi.ExtenderArgs
+		var hostPriorityList *schedulerapi.HostPriorityList
+
+		if err := json.NewDecoder(body).Decode(&extenderArgs); err != nil {
+			panic(err)
+		}
+
+		if list, err := prioritize.Handler(extenderArgs); err != nil {
+			panic(err)
+		} else {
+			hostPriorityList = list
+		}
+
+		if resultBody, err := json.Marshal(hostPriorityList); err != nil {
+			panic(err)
+		} else {
+			log.Print("info: ", prioritize.Name, " hostPriorityList = ", string(resultBody))
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			w.Write(resultBody)
+		}
+	}
+}
+
 //
 //func BindRoute(bind Bind) httprouter.Handle {
 //	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -166,10 +167,11 @@ func AddPredicateRoute(router *httprouter.Router, predicate Predicate) {
 	router.POST(path, DebugLogging(PredicateRoute(predicate), path))
 }
 
-//func AddPrioritize(router *httprouter.Router, prioritize Prioritize) {
-//	path := prioritiesPrefix + "/" + prioritize.Name
-//	router.POST(path, DebugLogging(PrioritizeRoute(prioritize), path))
-//}
+func AddPrioritize(router *httprouter.Router, prioritize Prioritize) {
+	path := prioritiesPrefix + "/" + prioritize.Name
+	router.POST(path, DebugLogging(PrioritizeRoute(prioritize), path))
+}
+
 //
 //func AddBind(router *httprouter.Router, bind Bind) {
 //	if handle, _, _ := router.Lookup("POST", bindPath); handle != nil {
