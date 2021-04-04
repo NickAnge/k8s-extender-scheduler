@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"log"
 
 	"k8s.io/api/core/v1"
@@ -43,23 +42,6 @@ func (p Predicate) Handler(args schedulerapi.ExtenderArgs) *schedulerapi.Extende
 	}
 
 	return &result
-}
-
-func getOurLocation(pod v1.Pod) (string, error) {
-
-	if value, ok := pod.Labels["OurLocation"]; ok {
-		return value, nil
-	}
-
-	return "", errors.New("No value OurLocation")
-}
-
-func getTypeOfComponent(pod v1.Pod) (string, error) {
-
-	if value, found := pod.Labels["typeOfComponent"]; found {
-		return value, nil
-	}
-	return "", errors.New("No value typeOfComponent")
 }
 
 ///func selectNode(pod v1.Pod, nodes []v1.Node) v1.Node {
