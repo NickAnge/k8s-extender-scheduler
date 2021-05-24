@@ -65,19 +65,22 @@ var (
 				if err != nil {
 					return &priorityList, err
 				}
-				//TEST PURPOSES-FILL NODE VALUES
-				for i, node := range nodes {
+
+				//PURPOSES-FILL  LATENCIES VALUES
+				for _, node := range nodes {
 
 					newNode := &Testnode{
 						name: node.Name,
 					}
-					newNode.FillValues(node.Name, (2 + i))
+					//newNode.FillValues(node.Name, (2 + i))
+					newNode.FillLatencies(node)
 					arrayNodes = append(arrayNodes, *newNode)
 				}
 
 				for _, node := range arrayNodes {
 					log.Print("info:", node)
 				}
+
 				latencyMap := make(map[float64]Testnode)
 				min := math.Inf(+1)
 
@@ -92,6 +95,7 @@ var (
 
 				priorityList = make([]schedulerapi.HostPriority, 1)
 
+				//return the Node with the lowest Latency value
 				priorityList[0] = schedulerapi.HostPriority{
 					Host:  latencyMap[min].name,
 					Score: 1,
@@ -175,8 +179,8 @@ func main() {
 
 	//AddBind(router, NoBind)
 
-	log.Print("info: server starting on the port :80")
-	if err := http.ListenAndServe(":80", router); err != nil {
+	log.Print("info: server starting on the port :8800")
+	if err := http.ListenAndServe(":8800", router); err != nil {
 		log.Fatal(err)
 	}
 }
