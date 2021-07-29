@@ -108,25 +108,6 @@ var (
 			}
 		},
 	}
-	//	priorityList = make([]schedulerapi.HostPriority, len(nodes))
-
-	//	priorityList[0] = schedulerapi.HostPriority{
-	//		Host:  nodes[0].Name,
-	//		Score: 91,
-	//	}
-
-	//	priorityList[1] = schedulerapi.HostPriority{
-	//		Host:  nodes[1].Name,
-	//		Score: 100,
-	//	}
-	//	//for _, node := range nodes {
-	//	//	priorityList[0] = schedulerapi.HostPriority{
-	//	//		Host:  node.Name,
-	//	//		Score: 0,
-	//	//			}
-	//	//}
-	//	return &priorityList, nil
-
 )
 
 func StringToLevel(levelStr string) colog.Level {
@@ -166,7 +147,6 @@ func main() {
 
 	predicates := []Predicate{TruePredicate}
 
-	//AddPredicateRoute(router, TruePredicate)
 	for _, p := range predicates {
 		log.Print("Trying to run predicate:", p.Name)
 		AddPredicateRoute(router, p)
@@ -176,8 +156,6 @@ func main() {
 	for _, p := range priorities {
 		AddPrioritize(router, p)
 	}
-
-	//AddBind(router, NoBind)
 
 	log.Print("info: server starting on the port :8800")
 	if err := http.ListenAndServe(":8800", router); err != nil {
